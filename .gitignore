@@ -1,0 +1,5 @@
+# Ignore very large local assets not suitable for Git
+新幹線概論Ⅰ.pdf
+
+# macOS
+.DS_Store

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>新幹線概論1｜リンクポータル</title>
+  <meta name="description" content="資料ポータルサイト" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;          /* 背景 */
+      --card:#12172b;        /* カード面 */
+      --card-2:#0f1430;      /* 影色 */
+      --text:#e9ecf1;        /* 文字色 */
+      --muted:#9aa3b2;       /* サブ文字 */
+      --ring:#91c2ff;        /* フォーカスリング */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Noto Sans JP", system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 1200px at 80% -10%, #183a76 0%, rgba(24,58,118,0) 60%),
+        radial-gradient(900px 900px at -10% 110%, #4a1d73 0%, rgba(74,29,115,0) 60%),
+        var(--bg);
+    }
+    header{
+      max-width:1000px; margin:24px auto 8px; padding:0 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .title{font-size:clamp(20px,3.6vw,28px); font-weight:700; letter-spacing:0.02em}
+    .subtitle{font-size:clamp(12px,2.2vw,14px); color:var(--muted)}
+    main{max-width:1000px; margin:0 auto 64px; padding:8px 16px 24px}
+
+    /* グリッド（スマホ風ホーム画面） */
+    .grid{
+      display:grid; gap:16px; padding-top:12px;
+      grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    }
+
+    /* スマホのホーム画面風（アイコン＋題名） */
+    .tile{
+      text-decoration:none; color:var(--text);
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      padding:10px 4px; outline:none;
+    }
+    .tile:hover .icon{ transform: translateY(-2px) }
+    .tile:focus-visible .icon{ box-shadow: 0 0 0 3px var(--ring), inset 0 0 0 1px rgba(255,255,255,0.14) }
+
+    .icon{
+      width:clamp(56px,9vw,76px); height:clamp(56px,9vw,76px);
+      border-radius:20px; display:grid; place-items:center;
+      font-size:clamp(26px,4.5vw,34px); font-weight:700;
+      background:var(--bg-grad); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 6px 18px rgba(0,0,0,0.35);
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .icon img{
+      max-width:85%;
+      max-height:85%;
+      display:block;
+      object-fit:contain;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,.25));
+    }
+    .icon img.no-shadow{ filter:none }
+    .label{
+      font-size:13px; font-weight:600; line-height:1.2; text-align:center;
+      max-width:9.5em; /* 2行を想定 */
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    }
+    /* 説明や外部表記はスマホ風では非表示 */
+    .caption, .ext{ display:none }
+
+    /* タイルごとの色（アクセント） */
+    .ekinet   { --bg-grad: linear-gradient(135deg,#ffffff,#ffffff); }
+    .jre      { --bg-grad: linear-gradient(135deg,#22c55e,#14532d); }
+    .expy     { --bg-grad: linear-gradient(135deg,#ffffff,#ffffff); }
+    .kodama   { --bg-grad: linear-gradient(135deg,#f47e3f,#fbd671); }
+    .e5489    { --bg-grad: linear-gradient(135deg,#ffffff,#ffffff); }
+    .baritoku { --bg-grad: linear-gradient(135deg,#0357ff,#71a6fb); }
+    .wester   { --bg-grad: linear-gradient(135deg,#ffffff,#ffffff); }
+    .jrq      { --bg-grad: linear-gradient(135deg,#ffffff,#ffffff); }
+    .dokokani { --bg-grad: linear-gradient(135deg,#ffffff,#ffffff); }
+    .touchdego{ --bg-grad: linear-gradient(135deg,#10b981,#84cc16); }
+    .pdf      { --bg-grad: linear-gradient(135deg,#a78bfa,#0ea5e9); }
+    .test     { --bg-grad: linear-gradient(135deg,#34d399,#22c55e); }
+
+    footer{max-width:1000px; margin:28px auto 48px; padding:0 16px; color:var(--muted); font-size:12px}
+    .note{opacity:.9}
+    .ext{ font-size:11px; opacity:.9 }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="title">新幹線概論1｜リンクポータル</div>
+      <div class="subtitle">関連サイト・資料へ素早くアクセス</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid" role="list" aria-label="リンク一覧">
+      <!-- えきねっと -->
+      <a class="tile ekinet" role="listitem" href="https://www.eki-net.com/top/e-ticket/?src=idxrecService" target="_blank" rel="noopener noreferrer" aria-label="えきねっと（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img class="no-shadow" src="./えきねっと.webp" alt="えきねっと ロゴ"></div>
+        <div class="label">えきねっと</div>
+      </a>
+
+      <!-- JREポイント -->
+      <a class="tile jre" role="listitem" href="https://www.eki-net.com/top/point/" target="_blank" rel="noopener noreferrer" aria-label="JREポイント（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img src="./JREポイント.png" alt="JREポイント ロゴ" loading="lazy" decoding="async"></div>
+        <div class="label">JREポイント</div>
+      </a>
+
+      <!-- どこかにビューン（トライアル） -->
+      <a class="tile dokokani" role="listitem" href="https://dokokani-eki-net.com/dokokani/trial/index" target="_blank" rel="noopener noreferrer" aria-label="どこかにビューン（トライアル）（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img class="no-shadow" src="./どこかにビューン.jpg" alt="どこかにビューン ロゴ" loading="lazy" decoding="async"></div>
+        <div class="label">どこかにビューン（トライアル）</div>
+      </a>
+
+      <!-- タッチでGo!新幹線 -->
+      <a class="tile touchdego" role="listitem" href="https://www.jreast.co.jp/touchdego/" target="_blank" rel="noopener noreferrer" aria-label="タッチでGo!新幹線（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img src="./タッチでGo新幹線.png" alt="タッチでGo!新幹線 ロゴ" loading="lazy" decoding="async"></div>
+        <div class="label">タッチでGo!新幹線</div>
+      </a>
+
+      <!-- EX予約 -->
+      <a class="tile expy" role="listitem" href="https://expy.jp/product/" target="_blank" rel="noopener noreferrer" aria-label="EX予約（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img class="no-shadow" src="./EX予約.jpeg" alt="EX予約 ロゴ"></div>
+        <div class="label">EX予約</div>
+      </a>
+
+      <!-- ぷらっとこだま・いこっかこだま -->
+      <a class="tile kodama" role="listitem" href="https://travel.jr-central.co.jp/plan/tokushu/kep/?class=item2" target="_blank" rel="noopener noreferrer" aria-label="ぷらっとこだま・いこっかこだま（新しいタブで開く）">
+        <div class="icon" aria-hidden="true">🍱</div>
+        <div class="label">ぷらっとこだま／いこっか</div>
+      </a>
+
+      <!-- e5489 -->
+      <a class="tile e5489" role="listitem" href="https://www.jr-odekake.net/railroad/ticket/tokutoku/" target="_blank" rel="noopener noreferrer" aria-label="e5489（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img class="no-shadow" src="./e5489.png" alt="e5489 ロゴ" loading="lazy" decoding="async"></div>
+        <div class="label">e5489</div>
+      </a>
+
+      <!-- バリ得こだま -->
+      <a class="tile baritoku" role="listitem" href="https://www.nta.co.jp/jr/shinkansen/kodama/" target="_blank" rel="noopener noreferrer" aria-label="バリ得こだま（新しいタブで開く）">
+        <div class="icon" aria-hidden="true">💡</div>
+        <div class="label">バリ得こだま</div>
+      </a>
+
+      <!-- WESTERポイント -->
+      <a class="tile wester" role="listitem" href="https://www.jr-odekake.net/goyoyaku/e5489/westerpoint-use/" target="_blank" rel="noopener noreferrer" aria-label="WESTERポイント（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img class="no-shadow" src="./Westerポイント.png" alt="WESTERポイント ロゴ" loading="lazy" decoding="async"></div>
+        <div class="label">WESTERポイント</div>
+      </a>
+
+      <!-- JR九州ネット予約 -->
+      <a class="tile jrq" role="listitem" href="https://www.jrkyushu-kippu.jp/fare/ticket/" target="_blank" rel="noopener noreferrer" aria-label="JR九州ネット予約（新しいタブで開く）">
+        <div class="icon" aria-hidden="true"><img class="no-shadow" src="./JR九州ネット予約.jpg" alt="JR九州ネット予約 ロゴ"></div>
+        <div class="label">JR九州ネット予約</div>
+      </a>
+
+      <!-- 講義資料（PDFダウンロード） -->
+      <!-- リポジトリ直下のPDFを配布します。ファイル名を変更したら href / download も合わせてください。 -->
+      <a class="tile pdf" role="listitem" href="./新幹線概論Ⅰ.pdf" download="新幹線概論Ⅰ.pdf" aria-label="講義資料PDFをダウンロード">
+        <div class="icon" aria-hidden="true">📕</div>
+        <div class="label">講義資料（PDF）</div>
+      </a>
+
+      <!-- 確認テスト（Microsoft Forms） -->
+      <a class="tile test" role="listitem" href="https://forms.cloud.microsoft/r/TTFUgVGc7U" target="_blank" rel="noopener noreferrer" aria-label="確認テスト（新しいタブで開く）">
+        <div class="icon" aria-hidden="true">📝</div>
+        <div class="label">確認テスト</div>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="note">※ 各リンクは公式サイト／外部サービスへ遷移します。講義資料PDFは同じサーバーから配布できます。</div>
+  </footer>
+</body>
+</html>
