@@ -165,7 +165,7 @@
 
       <!-- 講義資料（PDFダウンロード） -->
       <!-- リポジトリ直下のPDFを配布します。ファイル名を変更したら href / download も合わせてください。 -->
-      <a class="tile pdf" role="listitem" href="https://drive.google.com/uc?export=download&id=1LtwFWM5BCEF6RapZ9y8TTcojwr1tW6iE" target="_blank" rel="noopener noreferrer" download="新幹線概論Ⅰ.pdf" aria-label="講義資料PDFをダウンロード">
+      <a id="pdf-link" class="tile pdf" role="listitem" href="#" aria-label="講義資料PDFをダウンロード（パスワードが必要）">
         <div class="icon" aria-hidden="true">📕</div>
         <div class="label">講義資料（PDF）</div>
       </a>
@@ -181,5 +181,103 @@
   <footer>
     <div class="note">※ 各リンクは公式サイト／外部サービスへ遷移します。講義資料PDFは同じサーバーから配布できます。</div>
   </footer>
+  
+  <style>
+    /* 簡易モーダル */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
+    .modal{background:var(--card);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:min(92vw,420px);padding:18px;border:1px solid rgba(255,255,255,.08)}
+    .modal h3{margin:0 0 8px;font-size:18px}
+    .modal p{margin:0 0 12px;color:var(--muted);font-size:13px}
+    .row{display:flex;gap:8px}
+    .row input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#0c1328;color:var(--text);outline:none}
+    .row input:focus{box-shadow:0 0 0 3px var(--ring)}
+    .row button{padding:10px 14px;border-radius:10px;border:0;background:#2563eb;color:white;font-weight:700;cursor:pointer}
+    .row button.secondary{background:#334155}
+    .error{color:#f87171;font-size:12px;margin-top:8px;min-height:16px}
+    .badge{display:inline-block;margin-top:6px;font-size:11px;color:var(--muted)}
+  </style>
+  <div id="pw-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pw-title">
+    <div class="modal">
+      <h3 id="pw-title">パスワード入力</h3>
+      <p>9/5 23:30（JST）まではパスワードが必要です。</p>
+      <div class="row" style="margin-bottom:6px">
+        <input id="pw-input" type="password" inputmode="numeric" placeholder="パスワード" aria-label="パスワード" />
+        <button id="pw-ok">開く</button>
+        <button id="pw-cancel" class="secondary">閉じる</button>
+      </div>
+      <div id="pw-error" class="error" aria-live="polite"></div>
+      <div class="badge">ヒント: 202509052330</div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const PASSWORD = '202509052330';
+      // 2025-09-05 23:30 JST = 2025-09-05 14:30:00Z
+      const EXPIRY_MS = Date.parse('2025-09-05T14:30:00Z');
+      const FILE_ID = '1LtwFWM5BCEF6RapZ9y8TTcojwr1tW6iE';
+      const FILE_NAME = '新幹線概論Ⅰ.pdf';
+      const PDF_URL = `https://drive.google.com/uc?export=download&id=${FILE_ID}`;
+
+      const link = document.getElementById('pdf-link');
+      const modal = document.getElementById('pw-modal');
+      const input = document.getElementById('pw-input');
+      const okBtn = document.getElementById('pw-ok');
+      const cancelBtn = document.getElementById('pw-cancel');
+      const errorEl = document.getElementById('pw-error');
+
+      function openModal(){ modal.style.display = 'flex'; input.value=''; errorEl.textContent=''; setTimeout(()=>input.focus(),0); }
+      function closeModal(){ modal.style.display = 'none'; }
+      function grantAccess(){
+        // 許可状態をセッションに保存（ページを閉じるまで有効）
+        sessionStorage.setItem('pdfAccessGranted','1');
+        // 直接リンクに切り替えて開く
+        link.setAttribute('href', PDF_URL);
+        link.setAttribute('target','_blank');
+        link.setAttribute('rel','noopener noreferrer');
+        link.setAttribute('download', FILE_NAME);
+        window.open(PDF_URL, '_blank');
+      }
+
+      function requirePassword(){
+        link.addEventListener('click', function(e){
+          // 期限前のみブロック（期限後は標準の挙動）
+          if(Date.now() < EXPIRY_MS && !sessionStorage.getItem('pdfAccessGranted')){
+            e.preventDefault();
+            openModal();
+          }
+        });
+
+        okBtn.addEventListener('click', function(){
+          const v = (input.value || '').trim();
+          if(v === PASSWORD){
+            closeModal();
+            grantAccess();
+          }else{
+            errorEl.textContent = 'パスワードが違います';
+          }
+        });
+
+        cancelBtn.addEventListener('click', function(){ closeModal(); });
+        input.addEventListener('keydown', function(ev){ if(ev.key==='Enter'){ okBtn.click(); }});
+        modal.addEventListener('click', function(ev){ if(ev.target === modal){ closeModal(); }});
+      }
+
+      // 初期化：期限判定
+      if(Date.now() >= EXPIRY_MS){
+        // 期限後はそのままダウンロード可能
+        link.setAttribute('href', PDF_URL);
+        link.setAttribute('target','_blank');
+        link.setAttribute('rel','noopener noreferrer');
+        link.setAttribute('download', FILE_NAME);
+        link.setAttribute('aria-label','講義資料PDFをダウンロード');
+      }else{
+        // 期限前はパスワード保護
+        link.setAttribute('href', '#');
+        link.setAttribute('aria-label','講義資料PDFをダウンロード（パスワードが必要）');
+        requirePassword();
+      }
+    })();
+  </script>
 </body>
 </html>
